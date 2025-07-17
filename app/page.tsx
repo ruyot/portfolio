@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Send, User, Bot, ExternalLink, Github, Linkedin, Mail } from "lucide-react"
+import { Send, User, Bot, ExternalLink, Github, Linkedin, Mail, GitBranch, Clock, Coffee, Terminal } from "lucide-react"
 
 interface Message {
   id: string
@@ -83,11 +83,38 @@ export default function Portfolio() {
   ])
   const [inputValue, setInputValue] = useState("")
   const [activeSection, setActiveSection] = useState("hero")
+  const [codingStats, setCodingStats] = useState({
+    commitsThisMonth: 0,
+    hoursCodedToday: 0,
+    linesWritten: 0,
+    coffeeCount: 0
+  })
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
+
+  // Simulate fetching coding stats with animations
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCodingStats(prev => ({
+        commitsThisMonth: Math.min(prev.commitsThisMonth + 1, 47), // Placeholder target
+        hoursCodedToday: Math.min(prev.hoursCodedToday + 0.1, 8.5),
+        linesWritten: Math.min(prev.linesWritten + 50, 2847),
+        coffeeCount: Math.min(prev.coffeeCount + 1, 12)
+      }))
+    }, 100)
+
+    const timeout = setTimeout(() => {
+      clearInterval(interval)
+    }, 3000)
+
+    return () => {
+      clearInterval(interval)
+      clearTimeout(timeout)
+    }
+  }, [])
 
   const handleSendMessage = (content: string) => {
     const userMessage: Message = {
@@ -180,27 +207,52 @@ export default function Portfolio() {
             {/* About Section */}
             <section id="about" className="py-20">
               <h2 className="text-3xl font-bold mb-8 font-mono">About</h2>
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="space-y-6">
-                  <p className="text-gray-300 leading-relaxed">
-                    I'm an aspiring ML Engineer and Founder with a passion for building intelligent systems that solve
-                    real-world problems. My journey spans from academic research to practical applications in industry.
-                  </p>
-                  <p className="text-gray-300 leading-relaxed">
-                    Currently focused on developing next-generation AI solutions while exploring entrepreneurial
-                    opportunities in the tech space.
-                  </p>
+              <div className="grid md:grid-cols-[200px_1fr] gap-8 items-start">
+                {/* Portrait Image */}
+                <div className="flex flex-col items-center">
+                  <div className="w-48 h-64 bg-gray-800 border-2 border-gray-600 rounded-lg flex items-center justify-center mb-4 overflow-hidden">
+                    <img
+                      src="/placeholder-user.jpg"
+                      alt="Tahmeed T Portrait"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        if (target.nextSibling) {
+                          (target.nextSibling as HTMLElement).style.display = 'flex';
+                        }
+                      }}
+                    />
+                    <div className="w-full h-full bg-gray-800 flex items-center justify-center text-gray-400" style={{display: 'none'}}>
+                      <User className="w-16 h-16" />
+                    </div>
+                  </div>
+                  <p className="text-gray-400 text-sm text-center">Portrait Photo</p>
                 </div>
-                <div className="space-y-4">
-                  <h3 className="text-xl font-semibold text-gray-200">Core Skills</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {["Python", "PyTorch", "TensorFlow", "React", "Node.js", "Docker", "AWS", "PostgreSQL"].map(
-                      (skill) => (
-                        <span key={skill} className="px-3 py-1 bg-gray-800 rounded-full text-sm border border-gray-700">
-                          {skill}
-                        </span>
-                      ),
-                    )}
+
+                {/* Content */}
+                <div className="space-y-8">
+                  <div className="space-y-6">
+                    <p className="text-gray-300 leading-relaxed">
+                      I'm an aspiring ML Engineer and Founder with a passion for building intelligent systems that solve
+                      real-world problems. My journey spans from academic research to practical applications in industry.
+                    </p>
+                    <p className="text-gray-300 leading-relaxed">
+                      Currently focused on developing next-generation AI solutions while exploring entrepreneurial
+                      opportunities in the tech space.
+                    </p>
+                  </div>
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-semibold text-gray-200">Core Skills</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {["Python", "PyTorch", "TensorFlow", "React", "Node.js", "Docker", "AWS", "PostgreSQL"].map(
+                        (skill) => (
+                          <span key={skill} className="px-3 py-1 bg-gray-800 rounded-full text-sm border border-gray-700">
+                            {skill}
+                          </span>
+                        ),
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -413,6 +465,77 @@ export default function Portfolio() {
                   alt="Project 6"
                   className="w-full h-full object-cover rounded-lg"
                 />
+              </div>
+            </div>
+          </div>
+
+          {/* Coding Stats Section */}
+          <div className="border-t border-gray-200 p-4 bg-gradient-to-b from-white to-gray-50">
+            <h4 className="text-sm font-semibold text-black mb-3 font-mono">Live Coding Stats</h4>
+            <div className="space-y-3">
+              {/* GitHub Commits This Month */}
+              <div className="bg-black text-green-400 p-3 rounded-lg font-mono text-xs">
+                <div className="flex items-center gap-2 mb-1">
+                  <GitBranch className="w-3 h-3" />
+                  <span className="text-green-300">git log --since="1 month ago" --oneline | wc -l</span>
+                </div>
+                <div className="text-white">
+                  <span className="text-green-400">$</span> {Math.floor(codingStats.commitsThisMonth)} commits this month
+                </div>
+                <div className="text-gray-400 text-[10px] mt-1">
+                  [{Array(Math.floor(codingStats.commitsThisMonth / 5)).fill('█').join('')}{Array(10 - Math.floor(codingStats.commitsThisMonth / 5)).fill('░').join('')}] {Math.floor((codingStats.commitsThisMonth / 47) * 100)}%
+                </div>
+              </div>
+
+              {/* Hours Coded Today */}
+              <div className="bg-black text-blue-400 p-3 rounded-lg font-mono text-xs">
+                <div className="flex items-center gap-2 mb-1">
+                  <Clock className="w-3 h-3" />
+                  <span className="text-blue-300">watch -n 1 'ps aux | grep code'</span>
+                </div>
+                <div className="text-white">
+                  <span className="text-blue-400">$</span> {codingStats.hoursCodedToday.toFixed(1)} hours today
+                </div>
+                <div className="text-gray-400 text-[10px] mt-1">
+                  Active sessions: VSCode, Terminal, Browser
+                </div>
+              </div>
+
+              {/* Lines Written */}
+              <div className="bg-black text-yellow-400 p-3 rounded-lg font-mono text-xs">
+                <div className="flex items-center gap-2 mb-1">
+                  <Terminal className="w-3 h-3" />
+                  <span className="text-yellow-300">{"wc -l src/**/*.{ts,tsx,py}"}</span>
+                </div>
+                <div className="text-white">
+                  <span className="text-yellow-400">$</span> {Math.floor(codingStats.linesWritten).toLocaleString()} lines written
+                </div>
+                <div className="text-gray-400 text-[10px] mt-1">
+                  TypeScript: 67% | Python: 28% | Other: 5%
+                </div>
+              </div>
+
+              {/* Coffee Count */}
+              <div className="bg-black text-orange-400 p-3 rounded-lg font-mono text-xs">
+                <div className="flex items-center gap-2 mb-1">
+                  <Coffee className="w-3 h-3" />
+                  <span className="text-orange-300">cat /dev/coffee | grep today</span>
+                </div>
+                <div className="text-white">
+                  <span className="text-orange-400">$</span> {Math.floor(codingStats.coffeeCount)} cups consumed
+                </div>
+                <div className="text-gray-400 text-[10px] mt-1">
+                  Caffeine level: {codingStats.coffeeCount > 8 ? 'MAXIMUM' : 'OPTIMAL'}
+                </div>
+              </div>
+
+              {/* Placeholder for custom stats */}
+              <div className="bg-gray-100 border-2 border-dashed border-gray-300 p-3 rounded-lg">
+                <div className="text-gray-500 text-xs font-mono text-center">
+                  <Terminal className="w-4 h-4 mx-auto mb-1" />
+                  <div>Custom Stat Placeholder</div>
+                  <div className="text-[10px] mt-1">Add your own metrics here</div>
+                </div>
               </div>
             </div>
           </div>
