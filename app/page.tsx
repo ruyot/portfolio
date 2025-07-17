@@ -190,16 +190,40 @@ export default function Portfolio() {
           <div className="pt-20 px-6 pb-12">
             {/* Hero Section */}
             <section id="hero" className="min-h-[60vh] flex items-center">
-              <div className="max-w-4xl">
-                <div className="space-y-6">
-                  <h2 className="text-4xl lg:text-6xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-                    ML Engineer
-                  </h2>
-                  <h3 className="text-2xl lg:text-3xl text-gray-400">Founder & Developer</h3>
-                  <p className="text-lg text-gray-300 max-w-2xl leading-relaxed">
-                    Building the future with artificial intelligence. Passionate about creating innovative solutions at
-                    the intersection of machine learning, software development, and entrepreneurship.
-                  </p>
+              <div className="max-w-4xl w-full">
+                <div className="grid lg:grid-cols-[1fr_200px] gap-8 items-center">
+                  <div className="space-y-6">
+                    <h2 className="text-4xl lg:text-6xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+                      ML Engineer
+                    </h2>
+                    <h3 className="text-2xl lg:text-3xl text-gray-400">Founder & Developer</h3>
+                    <p className="text-lg text-gray-300 max-w-2xl leading-relaxed">
+                      Building the future with artificial intelligence. Passionate about creating innovative solutions at
+                      the intersection of machine learning, software development, and entrepreneurship.
+                    </p>
+                  </div>
+                  
+                  {/* Portrait Image */}
+                  <div className="flex flex-col items-center lg:items-end">
+                    <div className="w-48 h-64 bg-gray-800 border-2 border-gray-600 rounded-lg flex items-center justify-center mb-4 overflow-hidden">
+                      <img
+                        src="/placeholder-user.jpg"
+                        alt="Tahmeed T Portrait"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          if (target.nextSibling) {
+                            (target.nextSibling as HTMLElement).style.display = 'flex';
+                          }
+                        }}
+                      />
+                      <div className="w-full h-full bg-gray-800 flex items-center justify-center text-gray-400" style={{display: 'none'}}>
+                        <User className="w-16 h-16" />
+                      </div>
+                    </div>
+                    <p className="text-gray-400 text-sm text-center">Portrait Photo</p>
+                  </div>
                 </div>
               </div>
             </section>
@@ -207,52 +231,27 @@ export default function Portfolio() {
             {/* About Section */}
             <section id="about" className="py-20">
               <h2 className="text-3xl font-bold mb-8 font-mono">About</h2>
-              <div className="grid md:grid-cols-[200px_1fr] gap-8 items-start">
-                {/* Portrait Image */}
-                <div className="flex flex-col items-center">
-                  <div className="w-48 h-64 bg-gray-800 border-2 border-gray-600 rounded-lg flex items-center justify-center mb-4 overflow-hidden">
-                    <img
-                      src="/placeholder-user.jpg"
-                      alt="Tahmeed T Portrait"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        if (target.nextSibling) {
-                          (target.nextSibling as HTMLElement).style.display = 'flex';
-                        }
-                      }}
-                    />
-                    <div className="w-full h-full bg-gray-800 flex items-center justify-center text-gray-400" style={{display: 'none'}}>
-                      <User className="w-16 h-16" />
-                    </div>
-                  </div>
-                  <p className="text-gray-400 text-sm text-center">Portrait Photo</p>
+              <div className="space-y-8">
+                <div className="space-y-6">
+                  <p className="text-gray-300 leading-relaxed">
+                    I'm an aspiring ML Engineer and Founder with a passion for building intelligent systems that solve
+                    real-world problems. My journey spans from academic research to practical applications in industry.
+                  </p>
+                  <p className="text-gray-300 leading-relaxed">
+                    Currently focused on developing next-generation AI solutions while exploring entrepreneurial
+                    opportunities in the tech space.
+                  </p>
                 </div>
-
-                {/* Content */}
-                <div className="space-y-8">
-                  <div className="space-y-6">
-                    <p className="text-gray-300 leading-relaxed">
-                      I'm an aspiring ML Engineer and Founder with a passion for building intelligent systems that solve
-                      real-world problems. My journey spans from academic research to practical applications in industry.
-                    </p>
-                    <p className="text-gray-300 leading-relaxed">
-                      Currently focused on developing next-generation AI solutions while exploring entrepreneurial
-                      opportunities in the tech space.
-                    </p>
-                  </div>
-                  <div className="space-y-4">
-                    <h3 className="text-xl font-semibold text-gray-200">Core Skills</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {["Python", "PyTorch", "TensorFlow", "React", "Node.js", "Docker", "AWS", "PostgreSQL"].map(
-                        (skill) => (
-                          <span key={skill} className="px-3 py-1 bg-gray-800 rounded-full text-sm border border-gray-700">
-                            {skill}
-                          </span>
-                        ),
-                      )}
-                    </div>
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold text-gray-200">Core Skills</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {["Python", "PyTorch", "TensorFlow", "React", "Node.js", "Docker", "AWS", "PostgreSQL"].map(
+                      (skill) => (
+                        <span key={skill} className="px-3 py-1 bg-gray-800 rounded-full text-sm border border-gray-700">
+                          {skill}
+                        </span>
+                      ),
+                    )}
                   </div>
                 </div>
               </div>
