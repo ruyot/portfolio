@@ -24,20 +24,20 @@ interface Project {
 
 const projects: Project[] = [
   {
-    title: "Neural Network Optimizer",
-    description: "Advanced ML optimization framework for deep learning models with custom gradient descent algorithms.",
+    title: "Truthful - AI powered Cybersecurity backed by Cohere Labs",
+    description: "Built my own ML model to detect Real vs AI content from scratch. Trained on 100k+ frames on Google Cloud and deployed on render.",
     tech: ["Python", "PyTorch", "CUDA", "NumPy"],
     github: "#",
   },
   {
-    title: "AI-Powered Analytics Platform",
-    description: "Full-stack platform leveraging machine learning for predictive business analytics.",
+    title: "Web - Click and commit browser IDE",
+    description: "Built a browser IDE with simple UX/UI, a custom terminal, deployment view, AI assistants and click and drag commit + merges, usable for anyone.",
     tech: ["React", "Node.js", "TensorFlow", "PostgreSQL"],
     link: "#",
   },
   {
-    title: "Computer Vision Pipeline",
-    description: "Real-time object detection and classification system for autonomous systems.",
+    title: "GameShare - Decentralized cloud share platform",
+    description: "Building a decentralized marketplace where users can earn money for hosting their hardware via cloud and others can play via the same systems creating a low commitment, low cost, and accessible entertainment experience for everyone. Over 100+ users in beta testing.",
     tech: ["Python", "OpenCV", "YOLO", "Docker"],
     github: "#",
   },
@@ -46,21 +46,21 @@ const projects: Project[] = [
 const experiences = [
   {
     role: "ML Engineer",
-    company: "Stealth Startup",
+    company: "Ollon",
     period: "2024 - Present",
-    description: "Building next-generation AI systems for enterprise automation.",
+    description: "Scaled my own MCP server linked to Tick into production for startups, performed QA and fixes on over 200+ tickets across 10+ projects. Worked cross-functionality with teams and businesses across Canada and the US.",
   },
   {
     role: "Full Stack Developer",
-    company: "Freelance",
+    company: "Knorket.AI",
     period: "2022 - 2024",
-    description: "Developed scalable web applications and ML-powered solutions for various clients.",
+    description: "Performed competitor and market analysis including sizing, growth and projections. Led technical audits, analyzed backlinks CPC and target demographics. Developed a portfolio of 15+ client-facing presentations and reports.",
   },
   {
-    role: "Research Assistant",
-    company: "University Lab",
+    role: "Consultant",
+    company: "Laurier Consulting Group",
     period: "2021 - 2022",
-    description: "Conducted research in deep learning and neural network architectures.",
+    description: "Developed GTM strategies for two companies in the US and Canada through proposals presentations and audits. Conducted comprehensive market-research, financial analysis and creation of visual analytics predicting success in upcoming years.",
   },
 ]
 
@@ -69,6 +69,15 @@ const quickPrompts = [
   { text: "Show me your projects", action: "projects" },
   { text: "What's your experience?", action: "experience" },
   { text: "How can I contact you?", action: "contact" },
+]
+
+const funFacts = [
+  "I've been playing piano since I was 12",
+  "Chess Champion..self proclaimed..",
+  "Love games, cyberpunk 😎",
+  "142 wpm typing speed",
+  "4 Hackathons attended so far",
+  "Started really getting into coding this summer"
 ]
 
 export default function Portfolio() {
@@ -87,33 +96,174 @@ export default function Portfolio() {
     commitsThisMonth: 0,
     hoursCodedToday: 0,
     linesWritten: 0,
-    coffeeCount: 0
+    coffeeCount: 0,
+    realCommitsThisMonth: 0
   })
+  const [funFactsAnimated, setFunFactsAnimated] = useState<string[]>(Array(6).fill(''))
+  const [animationsTriggered, setAnimationsTriggered] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const codingStatsRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
-  // Simulate fetching coding stats with animations
-  useEffect(() => {
+  // Fetch real GitHub commits data
+  const fetchGitHubCommits = async () => {
+    try {
+      const response = await fetch('https://api.github.com/users/ruyot/events?per_page=100')
+      const events = await response.json()
+      
+      // Get current month start date
+      const now = new Date()
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
+      
+      // Count push events (commits) this month
+      let commitsCount = 0
+      events.forEach((event: any) => {
+        if (event.type === 'PushEvent') {
+          const eventDate = new Date(event.created_at)
+          if (eventDate >= monthStart) {
+            // Count the number of commits in this push
+            commitsCount += event.payload.commits ? event.payload.commits.length : 1
+          }
+        }
+      })
+      
+      console.log(`Found ${commitsCount} commits this month`)
+      return commitsCount
+    } catch (error) {
+      console.error('Error fetching GitHub data:', error)
+      // Fallback to a realistic number if API fails
+      return 47
+    }
+  }
+
+  // Animate coding stats
+  const animateStats = async () => {
+    // Fetch real GitHub data first
+    const realCommits = await fetchGitHubCommits()
+    setCodingStats(prev => ({ ...prev, realCommitsThisMonth: realCommits }))
+    
     const interval = setInterval(() => {
-      setCodingStats(prev => ({
-        commitsThisMonth: Math.min(prev.commitsThisMonth + 1, 47), // Placeholder target
-        hoursCodedToday: Math.min(prev.hoursCodedToday + 0.1, 8.5),
-        linesWritten: Math.min(prev.linesWritten + 50, 2847),
-        coffeeCount: Math.min(prev.coffeeCount + 1, 12)
-      }))
+      setCodingStats(prev => {
+        const newStats = { ...prev }
+        
+        // Update commits with real data
+        if (newStats.commitsThisMonth < realCommits) {
+          newStats.commitsThisMonth += Math.max(1, Math.floor(realCommits / 30))
+          newStats.commitsThisMonth = Math.min(newStats.commitsThisMonth, realCommits)
+        }
+
+        // Update hours
+        if (newStats.hoursCodedToday < 8.5) {
+          newStats.hoursCodedToday += 0.1
+        }
+
+        // Update lines
+        if (newStats.linesWritten < 2847) {
+          newStats.linesWritten += 50
+        }
+
+        // Update coffee
+        if (newStats.coffeeCount < 12) {
+          newStats.coffeeCount += 1
+        }
+
+        return newStats
+      })
     }, 100)
 
-    const timeout = setTimeout(() => {
+    setTimeout(() => {
       clearInterval(interval)
-    }, 3000)
+    }, 4000)
+  }
 
-    return () => {
-      clearInterval(interval)
-      clearTimeout(timeout)
+  // Type writer effect for fun facts
+  const typeWriter = (text: string, index: number, speed = 100) => {
+    let i = 0
+    const interval = setInterval(() => {
+      if (i < text.length) {
+        setFunFactsAnimated(prev => {
+          const newFacts = [...prev]
+          newFacts[index] = text.slice(0, i + 1)
+          return newFacts
+        })
+        i++
+      } else {
+        clearInterval(interval)
+      }
+    }, speed)
+  }
+
+  const animateFunFacts = () => {
+    // Start typing animations with delays
+    setTimeout(() => typeWriter(funFacts[0], 0, 80), 4000)
+    setTimeout(() => typeWriter(funFacts[1], 1, 90), 5500)
+    setTimeout(() => typeWriter(funFacts[2], 2, 85), 7000)
+    setTimeout(() => typeWriter(funFacts[3], 3, 75), 8500)
+    setTimeout(() => typeWriter(funFacts[4], 4, 95), 10000)
+    setTimeout(() => typeWriter(funFacts[5], 5, 88), 11500)
+  }
+
+  // Scroll progress line
+  const updateProgressLine = () => {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight
+    const scrollPercent = scrollTop / docHeight
+    
+    // Calculate line width: starts at 20px, grows to full width
+    const minWidth = 20
+    const maxWidth = window.innerWidth * 0.85
+    const currentWidth = minWidth + (maxWidth - minWidth) * scrollPercent
+    
+    const progressLine = document.getElementById('progress-line')
+    if (progressLine) {
+      progressLine.style.width = `${Math.min(currentWidth, maxWidth)}px`
     }
+  }
+
+  // Intersection Observer for scroll-triggered animations
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && entry.intersectionRatio > 0.3 && !animationsTriggered) {
+          // Start animations when coding stats section is 30% visible
+          animateStats()
+          animateFunFacts()
+          setAnimationsTriggered(true)
+        }
+      })
+    }, {
+      threshold: 0.3,
+      rootMargin: '-20% 0px -20% 0px'
+    })
+
+    if (codingStatsRef.current) {
+      observer.observe(codingStatsRef.current)
+    }
+
+    return () => observer.disconnect()
+  }, [animationsTriggered])
+
+  // Scroll event listener
+  useEffect(() => {
+    const throttle = (func: Function, limit: number) => {
+      let inThrottle: boolean
+      return function(this: any, ...args: any[]) {
+        if (!inThrottle) {
+          func.apply(this, args)
+          inThrottle = true
+          setTimeout(() => inThrottle = false, limit)
+        }
+      }
+    }
+
+    const handleScroll = throttle(updateProgressLine, 16)
+    window.addEventListener('scroll', handleScroll)
+    updateProgressLine() // Initial call
+
+    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
   const handleSendMessage = (content: string) => {
@@ -137,11 +287,11 @@ export default function Portfolio() {
         scrollTo = "about"
       } else if (content.toLowerCase().includes("project")) {
         botResponse =
-          "Here are some of Tahmeed's key projects: Neural Network Optimizer, AI-Powered Analytics Platform, and Computer Vision Pipeline. Each showcases different aspects of his ML and development expertise. Would you like to know more about any specific project?"
+          "Here are some of Tahmeed's key projects: Truthful AI Cybersecurity, Web Browser IDE, and GameShare Decentralized Platform. Each showcases different aspects of his ML and development expertise. Would you like to know more about any specific project?"
         scrollTo = "projects"
       } else if (content.toLowerCase().includes("experience")) {
         botResponse =
-          "Tahmeed has experience as an ML Engineer at a stealth startup, Full Stack Developer as a freelancer, and Research Assistant at a university lab. His background spans both practical application and academic research in AI/ML."
+          "Tahmeed has experience as an ML Engineer at Ollon, Full Stack Developer at Knorket.AI, and Consultant at Laurier Consulting Group. His background spans both practical application and academic research in AI/ML."
         scrollTo = "experience"
       } else if (content.toLowerCase().includes("contact")) {
         botResponse =
@@ -185,44 +335,81 @@ export default function Portfolio() {
             <div className="px-6 py-4">
               <h1 className="text-xl font-mono font-bold">Tahmeed T</h1>
             </div>
+            {/* Progressive white line */}
+            <div 
+              className="absolute bottom-0 left-1/2 transform -translate-x-1/2 h-0.5 bg-white transition-all duration-300 ease-out"
+              id="progress-line"
+              style={{ width: '20px' }}
+            />
           </header>
 
-          <div className="pt-20 px-6 pb-12">
+          <div className="pt-28 px-6 pb-12">
             {/* Hero Section */}
-            <section id="hero" className="min-h-[60vh] flex items-center">
+            <section id="hero" className="min-h-[60vh] flex items-center relative mt-4">
               <div className="max-w-4xl w-full">
-                <div className="grid lg:grid-cols-[1fr_200px] gap-8 items-center">
-                  <div className="space-y-6">
-                    <h2 className="text-4xl lg:text-6xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-                      ML Engineer
-                    </h2>
-                    <h3 className="text-2xl lg:text-3xl text-gray-400">Founder & Developer</h3>
-                    <p className="text-lg text-gray-300 max-w-2xl leading-relaxed">
-                      Building the future with artificial intelligence. Passionate about creating innovative solutions at
-                      the intersection of machine learning, software development, and entrepreneurship.
-                    </p>
+                <div className="space-y-6">
+                  <h2 className="text-4xl lg:text-6xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+                    ML Engineer
+                  </h2>
+                  <h3 className="text-2xl lg:text-3xl text-gray-400">Founder & Developer</h3>
+                  <p className="text-lg text-gray-300 max-w-2xl leading-relaxed">
+                    Building the future with artificial intelligence. Passionate about creating innovative solutions at
+                    the intersection of machine learning, software development, and entrepreneurship.
+                  </p>
+                  <div className="pt-2">
+                    <a 
+                      href="https://drive.google.com/file/d/1tgtZHn9RSxCSAqCvElz8SpYLoZVzasva/view?usp=sharing"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-100 transition-colors duration-200 no-underline"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                      </svg>
+                      Resume
+                    </a>
                   </div>
-                  
-                  {/* Portrait Image */}
-                  <div className="flex flex-col items-center lg:items-end">
-                    <div className="w-48 h-64 bg-gray-800 border-2 border-gray-600 rounded-lg flex items-center justify-center mb-4 overflow-hidden">
-                      <img
-                        src="/me.png"
-                        alt="Tahmeed T Portrait"
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          if (target.nextSibling) {
-                            (target.nextSibling as HTMLElement).style.display = 'flex';
-                          }
-                        }}
-                      />
-                      <div className="w-full h-full bg-gray-800 flex items-center justify-center text-gray-400" style={{display: 'none'}}>
-                        <User className="w-16 h-16" />
-                      </div>
+                </div>
+                
+                {/* Portrait Image - Absolutely positioned */}
+                <div className="hidden lg:flex flex-col items-center absolute top-1/2 transform -translate-y-1/2" style={{ right: '120px' }}>
+                  <div className="w-64 h-80 bg-gray-800 border-2 border-gray-600 rounded-lg flex items-center justify-center mb-4 overflow-hidden">
+                    <img
+                      src="/me.png"
+                      alt="Tahmeed T Portrait"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        if (target.nextSibling) {
+                          (target.nextSibling as HTMLElement).style.display = 'flex';
+                        }
+                      }}
+                    />
+                    <div className="w-full h-full bg-gray-800 flex items-center justify-center text-gray-400" style={{display: 'none'}}>
+                      <User className="w-16 h-16" />
                     </div>
-                    <p className="text-gray-400 text-sm text-center">Portrait Photo</p>
+                  </div>
+                </div>
+                
+                {/* Mobile Portrait - Shows below text on mobile */}
+                <div className="lg:hidden flex flex-col items-center mt-8">
+                  <div className="w-48 h-64 bg-gray-800 border-2 border-gray-600 rounded-lg flex items-center justify-center mb-4 overflow-hidden">
+                    <img
+                      src="/me.png"
+                      alt="Tahmeed T Portrait"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        if (target.nextSibling) {
+                          (target.nextSibling as HTMLElement).style.display = 'flex';
+                        }
+                      }}
+                    />
+                    <div className="w-full h-full bg-gray-800 flex items-center justify-center text-gray-400" style={{display: 'none'}}>
+                      <User className="w-16 h-16" />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -234,24 +421,27 @@ export default function Portfolio() {
               <div className="space-y-8">
                 <div className="space-y-6">
                   <p className="text-gray-300 leading-relaxed">
-                    I'm an aspiring ML Engineer and Founder with a passion for building intelligent systems that solve
-                    real-world problems. My journey spans from academic research to practical applications in industry.
+                    I'm an aspiring ML Engineer and Founder with a passion for building systems that solve
+                    real-world problems, help humanity and automate the future. My journey spans research to practical applications in the industry.
                   </p>
                   <p className="text-gray-300 leading-relaxed">
-                    Currently focused on developing next-generation AI solutions while exploring entrepreneurial
-                    opportunities in the tech space.
+                    Currently focused on developing next-generation solutions while exploring entrepreneurial
+                    opportunities in the tech space, seeking 2026 internships.
                   </p>
                 </div>
                 <div className="space-y-4">
                   <h3 className="text-xl font-semibold text-gray-200">Core Skills</h3>
                   <div className="flex flex-wrap gap-2">
-                    {["Python", "PyTorch", "TensorFlow", "React", "Node.js", "Docker", "AWS", "PostgreSQL"].map(
-                      (skill) => (
-                        <span key={skill} className="px-3 py-1 bg-gray-800 rounded-full text-sm border border-gray-700">
-                          {skill}
-                        </span>
-                      ),
-                    )}
+                    {[
+                      "Python", "PyTorch", "TensorFlow", "React", "Node.js", "Docker", "AWS", "Google Cloud",
+                      "CUDA", "C++", "Rust", "C", "Java", "JavaScript", "TypeScript", "SQL", "NoSQL",
+                      "GraphQL", "REST", "Web3", "Blockchain", "Cryptography", "Quantum Computing",
+                      "Machine Learning", "Computer Vision", "Natural Language Processing"
+                    ].map((skill) => (
+                      <span key={skill} className="px-3 py-1 bg-gray-800 rounded-full text-sm border border-gray-700">
+                        {skill}
+                      </span>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -321,18 +511,31 @@ export default function Portfolio() {
                   Interested in collaborating or discussing opportunities? Let's connect.
                 </p>
                 <div className="flex gap-4">
-                  <Button variant="outline" className="border-gray-700 hover:bg-gray-800 bg-transparent">
-                    <Mail className="w-4 h-4 mr-2" />
+                  <a 
+                    href="mailto:tabeeb700@gmail.com"
+                    className="flex items-center gap-2 px-4 py-2 border border-gray-700 hover:bg-gray-800 bg-transparent rounded text-white no-underline"
+                  >
+                    <Mail className="w-4 h-4" />
                     Email
-                  </Button>
-                  <Button variant="outline" className="border-gray-700 hover:bg-gray-800 bg-transparent">
-                    <Linkedin className="w-4 h-4 mr-2" />
+                  </a>
+                  <a 
+                    href="https://www.linkedin.com/in/tahmeedt"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 border border-gray-700 hover:bg-gray-800 bg-transparent rounded text-white no-underline"
+                  >
+                    <Linkedin className="w-4 h-4" />
                     LinkedIn
-                  </Button>
-                  <Button variant="outline" className="border-gray-700 hover:bg-gray-800 bg-transparent">
-                    <Github className="w-4 h-4 mr-2" />
+                  </a>
+                  <a 
+                    href="https://github.com/ruyot"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 border border-gray-700 hover:bg-gray-800 bg-transparent rounded text-white no-underline"
+                  >
+                    <Github className="w-4 h-4" />
                     GitHub
-                  </Button>
+                  </a>
                 </div>
               </div>
             </section>
@@ -349,7 +552,7 @@ export default function Portfolio() {
             <p className="text-sm text-gray-600 mt-1">Ask me about Tahmeed's work</p>
           </div>
 
-          {/* Chat Section - Moved Higher */}
+          {/* Chat Section */}
           <div className="flex-1 max-h-[40vh] flex flex-col">
             <ScrollArea className="flex-1 p-4">
               <div className="space-y-4">
@@ -424,46 +627,22 @@ export default function Portfolio() {
             <h4 className="text-sm font-semibold text-black mb-3">Featured Projects</h4>
             <div className="grid grid-cols-2 gap-3">
               <div className="aspect-square bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
-                <img
-                  src="/placeholder.svg?height=120&width=120"
-                  alt="Project 1"
-                  className="w-full h-full object-cover rounded-lg"
-                />
+                <img src="/Truthful.png" alt="Truthful Project" className="w-full h-full object-cover rounded-lg" />
               </div>
               <div className="aspect-square bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
-                <img
-                  src="/placeholder.svg?height=120&width=120"
-                  alt="Project 2"
-                  className="w-full h-full object-cover rounded-lg"
-                />
+                <img src="/webide.png" alt="Web IDE Project" className="w-full h-full object-cover rounded-lg" />
               </div>
               <div className="aspect-square bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
-                <img
-                  src="/placeholder.svg?height=120&width=120"
-                  alt="Project 3"
-                  className="w-full h-full object-cover rounded-lg"
-                />
+                <img src="/Gameshare.png" alt="GameShare Project" className="w-full h-full object-cover rounded-lg" />
               </div>
               <div className="aspect-square bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
-                <img
-                  src="/placeholder.svg?height=120&width=120"
-                  alt="Project 4"
-                  className="w-full h-full object-cover rounded-lg"
-                />
+                <img src="/Truthful_about.png" alt="Truthful About Page" className="w-full h-full object-cover rounded-lg" />
               </div>
               <div className="aspect-square bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
-                <img
-                  src="/placeholder.svg?height=120&width=120"
-                  alt="Project 5"
-                  className="w-full h-full object-cover rounded-lg"
-                />
+                <img src="/webmainframe.png" alt="Web Mainframe" className="w-full h-full object-cover rounded-lg" />
               </div>
               <div className="aspect-square bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
-                <img
-                  src="/placeholder.svg?height=120&width=120"
-                  alt="Project 6"
-                  className="w-full h-full object-cover rounded-lg"
-                />
+                <img src="/Truthful_analysispage.png" alt="Truthful Analysis" className="w-full h-full object-cover rounded-lg" />
               </div>
             </div>
           </div>
@@ -471,7 +650,7 @@ export default function Portfolio() {
           {/* Coding Stats Section */}
           <div className="border-t border-gray-200 p-4 bg-gradient-to-b from-white to-gray-50">
             <h4 className="text-sm font-semibold text-black mb-3 font-mono">Live Coding Stats</h4>
-            <div className="space-y-3">
+            <div className="space-y-3" ref={codingStatsRef}>
               {/* GitHub Commits This Month */}
               <div className="bg-black text-green-400 p-3 rounded-lg font-mono text-xs">
                 <div className="flex items-center gap-2 mb-1">
@@ -482,7 +661,7 @@ export default function Portfolio() {
                   <span className="text-green-400">$</span> {Math.floor(codingStats.commitsThisMonth)} commits this month
                 </div>
                 <div className="text-gray-400 text-[10px] mt-1">
-                  [{Array(Math.floor(codingStats.commitsThisMonth / 5)).fill('█').join('')}{Array(10 - Math.floor(codingStats.commitsThisMonth / 5)).fill('░').join('')}] {Math.floor((codingStats.commitsThisMonth / 47) * 100)}%
+                  [{Array(Math.floor(codingStats.commitsThisMonth / Math.max(1, Math.floor(codingStats.realCommitsThisMonth / 10)))).fill('█').join('')}{Array(10 - Math.floor(codingStats.commitsThisMonth / Math.max(1, Math.floor(codingStats.realCommitsThisMonth / 10)))).fill('░').join('')}] {Math.floor((codingStats.commitsThisMonth / Math.max(1, codingStats.realCommitsThisMonth)) * 100)}%
                 </div>
               </div>
 
@@ -496,7 +675,7 @@ export default function Portfolio() {
                   <span className="text-blue-400">$</span> {codingStats.hoursCodedToday.toFixed(1)} hours today
                 </div>
                 <div className="text-gray-400 text-[10px] mt-1">
-                  Active sessions: VSCode, Terminal, Browser
+                  Active sessions: Cursor, Terminal, Browser
                 </div>
               </div>
 
@@ -528,14 +707,66 @@ export default function Portfolio() {
                 </div>
               </div>
 
-              {/* Placeholder for custom stats */}
-              <div className="bg-gray-100 border-2 border-dashed border-gray-300 p-3 rounded-lg">
-                <div className="text-gray-500 text-xs font-mono text-center">
-                  <Terminal className="w-4 h-4 mx-auto mb-1" />
-                  <div>Custom Stat Placeholder</div>
-                  <div className="text-[10px] mt-1">Add your own metrics here</div>
+              {/* Fun Facts Terminal Animations */}
+              <div className="bg-black text-cyan-400 p-3 rounded-lg font-mono text-xs">
+                <div className="flex items-center gap-2 mb-1">
+                  <Terminal className="w-3 h-3" />
+                  <span className="text-cyan-300">echo $fun_fact_1</span>
                 </div>
-              </div>
+                                 <div className="text-white">
+                   <span className="text-cyan-400">{'>'}</span> {funFactsAnimated[0]}<span className={funFactsAnimated[0].length < funFacts[0].length ? "animate-pulse" : "hidden"}>|</span>
+                 </div>
+               </div>
+ 
+               <div className="bg-black text-purple-400 p-3 rounded-lg font-mono text-xs">
+                 <div className="flex items-center gap-2 mb-1">
+                   <Terminal className="w-3 h-3" />
+                   <span className="text-purple-300">cat ~/personal/hobbies.txt</span>
+                 </div>
+                 <div className="text-white">
+                   <span className="text-purple-400">{'>'}</span> {funFactsAnimated[1]}<span className={funFactsAnimated[1].length < funFacts[1].length ? "animate-pulse" : "hidden"}>|</span>
+                 </div>
+               </div>
+ 
+               <div className="bg-black text-pink-400 p-3 rounded-lg font-mono text-xs">
+                 <div className="flex items-center gap-2 mb-1">
+                   <Terminal className="w-3 h-3" />
+                   <span className="text-pink-300">cat ~/games/status.txt</span>
+                 </div>
+                 <div className="text-white">
+                   <span className="text-pink-400">{'>'}</span> {funFactsAnimated[2]}<span className={funFactsAnimated[2].length < funFacts[2].length ? "animate-pulse" : "hidden"}>|</span>
+                 </div>
+               </div>
+ 
+               <div className="bg-black text-emerald-400 p-3 rounded-lg font-mono text-xs">
+                 <div className="flex items-center gap-2 mb-1">
+                   <Terminal className="w-3 h-3" />
+                   <span className="text-emerald-300">tail ~/gaming/preferences.log</span>
+                 </div>
+                 <div className="text-white">
+                   <span className="text-emerald-400">{'>'}</span> {funFactsAnimated[3]}<span className={funFactsAnimated[3].length < funFacts[3].length ? "animate-pulse" : "hidden"}>|</span>
+                 </div>
+               </div>
+ 
+               <div className="bg-black text-amber-400 p-3 rounded-lg font-mono text-xs">
+                 <div className="flex items-center gap-2 mb-1">
+                   <Terminal className="w-3 h-3" />
+                   <span className="text-amber-300">wpm --test-speed</span>
+                 </div>
+                 <div className="text-white">
+                   <span className="text-amber-400">{'>'}</span> {funFactsAnimated[4]}<span className={funFactsAnimated[4].length < funFacts[4].length ? "animate-pulse" : "hidden"}>|</span>
+                 </div>
+               </div>
+ 
+               <div className="bg-black text-red-400 p-3 rounded-lg font-mono text-xs">
+                 <div className="flex items-center gap-2 mb-1">
+                   <Terminal className="w-3 h-3" />
+                   <span className="text-red-300">git log --since="this summer" --oneline</span>
+                 </div>
+                 <div className="text-white">
+                   <span className="text-red-400">{'>'}</span> {funFactsAnimated[5]}<span className={funFactsAnimated[5].length < funFacts[5].length ? "animate-pulse" : "hidden"}>|</span>
+                 </div>
+               </div>
             </div>
           </div>
         </div>
