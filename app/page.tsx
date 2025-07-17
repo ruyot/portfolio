@@ -207,7 +207,7 @@ export default function Portfolio() {
                   <div className="flex flex-col items-center lg:items-end">
                     <div className="w-48 h-64 bg-gray-800 border-2 border-gray-600 rounded-lg flex items-center justify-center mb-4 overflow-hidden">
                       <img
-                        src="/placeholder-user.jpg"
+                        src="/me.png"
                         alt="Tahmeed T Portrait"
                         className="w-full h-full object-cover"
                         onError={(e) => {
