@@ -37,6 +37,8 @@
                 <div class="px-6 py-4">
                     <h1 class="text-xl font-mono font-bold">Tahmeed T</h1>
                 </div>
+                <!-- Progressive white line -->
+                <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 h-0.5 bg-white transition-all duration-300 ease-out" id="progress-line" style="width: 20px;"></div>
             </header>
 
             <div class="pt-20 px-6 pb-12">
@@ -67,7 +69,7 @@
                         
                         <!-- Portrait Image - Absolutely positioned -->
                         <div class="hidden lg:flex flex-col items-center absolute top-1/2 transform -translate-y-1/2" style="right: 120px;">
-                            <div class="w-48 h-64 bg-gray-800 border-2 border-gray-600 rounded-lg flex items-center justify-center mb-4 overflow-hidden">
+                            <div class="w-64 h-80 bg-gray-800 border-2 border-gray-600 rounded-lg flex items-center justify-center mb-4 overflow-hidden">
                                 <img
                                     src="./me.png"
                                     alt="Tahmeed T Portrait"
@@ -636,19 +638,58 @@
             commitsThisMonth: 0,
             hoursCodedToday: 0,
             linesWritten: 0,
-            coffeeCount: 0
+            coffeeCount: 0,
+            realCommitsThisMonth: 0
         };
 
-        function animateStats() {
+        // Fetch real GitHub commits data
+        async function fetchGitHubCommits() {
+            try {
+                const response = await fetch('https://api.github.com/users/ruyot/events?per_page=100');
+                const events = await response.json();
+                
+                // Get current month start date
+                const now = new Date();
+                const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+                
+                // Count push events (commits) this month
+                let commitsCount = 0;
+                events.forEach(event => {
+                    if (event.type === 'PushEvent') {
+                        const eventDate = new Date(event.created_at);
+                        if (eventDate >= monthStart) {
+                            // Count the number of commits in this push
+                            commitsCount += event.payload.commits ? event.payload.commits.length : 1;
+                        }
+                    }
+                });
+                
+                codingStats.realCommitsThisMonth = commitsCount;
+                console.log(`Found ${commitsCount} commits this month`);
+                return commitsCount;
+            } catch (error) {
+                console.error('Error fetching GitHub data:', error);
+                // Fallback to a realistic number if API fails
+                codingStats.realCommitsThisMonth = 47;
+                return 47;
+            }
+        }
+
+        async function animateStats() {
+            // Fetch real GitHub data first
+            const realCommits = await fetchGitHubCommits();
+            
             const interval = setInterval(() => {
-                // Update commits
-                if (codingStats.commitsThisMonth < 47) {
-                    codingStats.commitsThisMonth += 1;
+                // Update commits with real data
+                if (codingStats.commitsThisMonth < realCommits) {
+                    codingStats.commitsThisMonth += Math.max(1, Math.floor(realCommits / 30)); // Animate faster for larger numbers
+                    codingStats.commitsThisMonth = Math.min(codingStats.commitsThisMonth, realCommits); // Don't exceed target
                     document.getElementById('commits-count').textContent = Math.floor(codingStats.commitsThisMonth);
                     
-                    const progress = Math.floor(codingStats.commitsThisMonth / 5);
-                    const remaining = 10 - progress;
-                    const percentage = Math.floor((codingStats.commitsThisMonth / 47) * 100);
+                    const maxProgress = 10;
+                    const progress = Math.min(maxProgress, Math.floor((codingStats.commitsThisMonth / Math.max(realCommits, 10)) * maxProgress));
+                    const remaining = maxProgress - progress;
+                    const percentage = Math.floor((codingStats.commitsThisMonth / realCommits) * 100);
                     document.getElementById('commits-progress').textContent = 
                         `[${'█'.repeat(progress)}${'░'.repeat(remaining)}] ${percentage}%`;
                 }
@@ -674,7 +715,7 @@
                 }
 
                 // Stop animation when all stats reach their targets
-                if (codingStats.commitsThisMonth >= 47 && 
+                if (codingStats.commitsThisMonth >= realCommits && 
                     codingStats.hoursCodedToday >= 8.5 && 
                     codingStats.linesWritten >= 2847 && 
                     codingStats.coffeeCount >= 12) {
@@ -684,7 +725,7 @@
 
             setTimeout(() => {
                 clearInterval(interval);
-            }, 3000);
+            }, 4000); // Extended timeout for potential larger numbers
         }
 
         // Fun facts typing animation
@@ -727,11 +768,68 @@
             setTimeout(() => typeWriter(funFacts[5], 'fun-fact-6', 88), 11500);
         }
 
-        // Start animations when page loads
+        // Scroll progress line
+        function updateProgressLine() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = scrollTop / docHeight;
+            
+            // Calculate line width: starts at 20px, grows to full width
+            const minWidth = 20;
+            const header = document.querySelector('header');
+            const headerWidth = header ? header.offsetWidth : window.innerWidth;
+            const maxWidth = headerWidth * 0.85; // 85% of header width
+            const currentWidth = minWidth + (maxWidth - minWidth) * scrollPercent;
+            
+            const progressLine = document.getElementById('progress-line');
+            progressLine.style.width = `${Math.min(currentWidth, maxWidth)}px`;
+        }
+
+        // Intersection Observer for scroll-triggered animations
+        function setupScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
+                        // Start animations when coding stats section is 30% visible
+                        animateStats().catch(console.error); // Handle async function
+                        animateFunFacts();
+                        // Disconnect observer after first trigger
+                        observer.disconnect();
+                    }
+                });
+            }, {
+                threshold: 0.3,
+                rootMargin: '-20% 0px -20% 0px'
+            });
+
+            // Observe the coding stats section
+            const codingStatsSection = document.getElementById('coding-stats');
+            if (codingStatsSection) {
+                observer.observe(codingStatsSection);
+            }
+        }
+
+        // Throttle function for performance
+        function throttle(func, limit) {
+            let inThrottle;
+            return function() {
+                const args = arguments;
+                const context = this;
+                if (!inThrottle) {
+                    func.apply(context, args);
+                    inThrottle = true;
+                    setTimeout(() => inThrottle = false, limit);
+                }
+            }
+        }
+
+        // Event listeners
         window.addEventListener('load', function() {
-            animateStats();
-            animateFunFacts();
+            setupScrollAnimations();
+            updateProgressLine();
         });
+
+        window.addEventListener('scroll', throttle(updateProgressLine, 16)); // ~60fps
 
         // Smooth scrolling for all internal links
         document.documentElement.classList.add('scroll-smooth');
