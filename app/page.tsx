@@ -54,13 +54,13 @@ const experiences = [
     role: "Software Engineer",
     company: "Ollon",
     period: "2025",
-    description: "Scaled my own MCP server linked to Tick into production for startups, performed QA and fixes on over 200+ tickets across 10+ projects. Worked cross-functionality with teams and businesses across Canada and the US.",
+    description: "Scaled my own MCP server linked to Tick into production for startups, performed QA and fixes on over 200+ tickets across 10+ projects. Worked cross-functionality with businesses across Canada and the US.",
   },
   {
-    role: "Full Stack Developer",
+    role: "Growth Intern",
     company: "Knorket.AI",
     period: "2024",
-    description: "Performed competitor and market analysis including sizing, growth and projections. Led technical audits, analyzed backlinks CPC and target demographics. Developed a portfolio of 15+ client-facing presentations and reports.",
+    description: "Performed competitor and market analysis including sizing, growth and projections. Led tech audits, analyzed backlinks CPC and target demographics. Developed a portfolio of 15+ presentations and reports.",
   },
   {
     role: "Consultant",
@@ -364,7 +364,7 @@ export default function Portfolio() {
                   </p>
                   <div className="pt-2">
                     <a 
-                      href="https://drive.google.com/file/d/1tgtZHn9RSxCSAqCvElz8SpYLoZVzasva/view?usp=sharing"
+                      href="https://drive.google.com/file/d/1m9trCm4n8Y3C_aCOKZ6N5gn4Yn7C5ahc/view?usp=sharing"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-100 transition-colors duration-200 no-underline"
@@ -444,9 +444,9 @@ export default function Portfolio() {
                       "GraphQL", "REST", "Web3", "Blockchain", "Cryptography", "Quantum Computing",
                       "Machine Learning", "Computer Vision", "Natural Language Processing"
                     ].map((skill) => (
-                      <span key={skill} className="px-3 py-1 bg-gray-800 rounded-full text-sm border border-gray-700">
-                        {skill}
-                      </span>
+                        <span key={skill} className="px-3 py-1 bg-gray-800 rounded-full text-sm border border-gray-700">
+                          {skill}
+                        </span>
                     ))}
                   </div>
                 </div>
@@ -481,7 +481,7 @@ export default function Portfolio() {
                       <p className="text-gray-300 mb-4">{project.description}</p>
                       <div className="flex flex-wrap gap-2">
                         {project.tech.map((tech) => (
-                          <span key={tech} className="px-2 py-1 bg-gray-800 rounded text-xs border border-gray-700">
+                          <span key={tech} className="px-2 py-1 bg-gray-800 rounded text-xs border border-gray-700 text-white">
                             {tech}
                           </span>
                         ))}
@@ -650,6 +650,18 @@ export default function Portfolio() {
               <div className="aspect-square bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
                 <img src="/Truthful_analysispage.png" alt="Truthful Analysis" className="w-full h-full object-cover rounded-lg" />
               </div>
+              <div className="aspect-square bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
+                <img src="/MinML.png" alt="MinML Project 1" className="w-full h-full object-cover rounded-lg" />
+              </div>
+              <div className="aspect-square bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
+                <img src="/MinML_2.png" alt="MinML Project 2" className="w-full h-full object-cover rounded-lg" />
+              </div>
+              <div className="aspect-square bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
+                <img src="/MinML_3.png" alt="MinML Project 3" className="w-full h-full object-cover rounded-lg" />
+              </div>
+              <div className="aspect-square bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
+                <img src="/MinML_4.png" alt="MinML Project 4" className="w-full h-full object-cover rounded-lg" />
+              </div>
             </div>
           </div>
 
@@ -779,7 +791,7 @@ export default function Portfolio() {
                  <div className="text-white">
                    <span className="text-red-400">{'>'}</span> {funFactsAnimated[5]}<span className={funFactsAnimated[5].length < funFacts[5].length ? "animate-pulse" : "hidden"}>|</span>
                  </div>
-               </div>
+              </div>
             </div>
           </div>
         </div>
