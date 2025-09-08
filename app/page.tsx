@@ -222,10 +222,9 @@ export default function Portfolio() {
     const headerEl = document.querySelector('header') as HTMLElement | null
     const headerWidth = headerEl ? headerEl.clientWidth : window.innerWidth
 
-    // Calculate line width: starts at 20px, grows up to header width minus padding
+    // Calculate line width: starts small, grows to full header width
     const minWidth = 20
-    const sidePadding = 16 // keep a little inset from the edges
-    const maxWidth = Math.max(0, headerWidth - sidePadding * 2)
+    const maxWidth = Math.max(0, headerWidth)
     const currentWidth = Math.round(minWidth + (maxWidth - minWidth) * scrollPercent)
     
     const progressLine = document.getElementById('progress-line')
