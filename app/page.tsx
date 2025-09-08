@@ -354,7 +354,7 @@ export default function Portfolio() {
             <section id="hero" className="min-h-[60vh] flex items-center relative mt-4">
               <div className="max-w-4xl w-full">
                 <div className="space-y-6">
-                  <h2 className="text-4xl lg:text-6xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+                  <h2 className="inline-block text-4xl lg:text-6xl font-bold leading-[1.1] pb-[0.1em] bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
                     ML Engineer
                   </h2>
                   <h3 className="text-2xl lg:text-3xl text-gray-400">Founder & Developer</h3>
