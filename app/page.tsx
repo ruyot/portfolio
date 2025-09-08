@@ -24,16 +24,10 @@ interface Project {
 
 const projects: Project[] = [
   {
-    title: "Truthful - AI powered Cybersecurity backed by Cohere Labs",
+    title: "Truthful - AI powered Cybersecurity",
     description: "Built my own ML model to detect Real vs AI content from scratch. Trained on 100k+ frames on Google Cloud and deployed on render.",
     tech: ["Python", "PyTorch", "CUDA", "NumPy"],
     github: "#",
-  },
-  {
-    title: "Web - Click and commit browser IDE",
-    description: "Built a browser IDE with simple UX/UI, a custom terminal, deployment view, AI assistants and click and drag commit + merges, usable for anyone.",
-    tech: ["React", "Node.js", "TensorFlow", "PostgreSQL"],
-    link: "#",
   },
   {
     title: "GameShare - Decentralized cloud share platform",
@@ -41,25 +35,37 @@ const projects: Project[] = [
     tech: ["Python", "OpenCV", "YOLO", "Docker"],
     github: "#",
   },
+  {
+    title: "MinML - Semantic compression systems for LLMs across any platform",
+    description: "Built a local, cross-provider token cache with safe prompt compression—cuts LLM cost while preserving meaning - private by default and model-agnostic.",
+    tech: ["Rust (PyO3)", "Python 3.13", "Transformers/Tokenizers", "PyTorch", "Cargo", "pytest"],
+    link: "#",
+  },
+  {
+    title: "Web - Click and commit browser IDE",
+    description: "Built a browser IDE with simple UX/UI, a custom terminal, deployment view, AI assistants and click and drag commit + merges, usable for anyone.",
+    tech: ["React", "Node.js", "TensorFlow", "PostgreSQL"],
+    link: "#",
+  },
 ]
 
 const experiences = [
   {
-    role: "ML Engineer",
+    role: "Software Engineer",
     company: "Ollon",
-    period: "2024 - Present",
+    period: "2025",
     description: "Scaled my own MCP server linked to Tick into production for startups, performed QA and fixes on over 200+ tickets across 10+ projects. Worked cross-functionality with teams and businesses across Canada and the US.",
   },
   {
     role: "Full Stack Developer",
     company: "Knorket.AI",
-    period: "2022 - 2024",
+    period: "2024",
     description: "Performed competitor and market analysis including sizing, growth and projections. Led technical audits, analyzed backlinks CPC and target demographics. Developed a portfolio of 15+ client-facing presentations and reports.",
   },
   {
     role: "Consultant",
     company: "Laurier Consulting Group",
-    period: "2021 - 2022",
+    period: "2024 - 2025",
     description: "Developed GTM strategies for two companies in the US and Canada through proposals presentations and audits. Conducted comprehensive market-research, financial analysis and creation of visual analytics predicting success in upcoming years.",
   },
 ]
@@ -661,7 +667,14 @@ export default function Portfolio() {
                   <span className="text-green-400">$</span> {Math.floor(codingStats.commitsThisMonth)} commits this month
                 </div>
                 <div className="text-gray-400 text-[10px] mt-1">
-                  [{Array(Math.floor(codingStats.commitsThisMonth / Math.max(1, Math.floor(codingStats.realCommitsThisMonth / 10)))).fill('█').join('')}{Array(10 - Math.floor(codingStats.commitsThisMonth / Math.max(1, Math.floor(codingStats.realCommitsThisMonth / 10)))).fill('░').join('')}] {Math.floor((codingStats.commitsThisMonth / Math.max(1, codingStats.realCommitsThisMonth)) * 100)}%
+                  {(() => {
+                    const total = Math.max(1, codingStats.realCommitsThisMonth)
+                    const denom = Math.max(1, Math.floor(total / 10))
+                    const units = Math.min(10, Math.max(0, Math.floor(codingStats.commitsThisMonth / denom)))
+                    const empties = Math.max(0, 10 - units)
+                    const pct = Math.min(100, Math.max(0, Math.floor((codingStats.commitsThisMonth / total) * 100)))
+                    return `[${'█'.repeat(units)}${'░'.repeat(empties)}] ${pct}%`
+                  })()}
                 </div>
               </div>
 
