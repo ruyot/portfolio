@@ -215,13 +215,18 @@ export default function Portfolio() {
   // Scroll progress line
   const updateProgressLine = () => {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight
-    const scrollPercent = scrollTop / docHeight
+    const docHeightRaw = document.documentElement.scrollHeight - window.innerHeight
+    const docHeight = Math.max(1, docHeightRaw)
+    const scrollPercent = Math.min(1, Math.max(0, scrollTop / docHeight))
     
-    // Calculate line width: starts at 20px, grows to full width
+    const headerEl = document.querySelector('header') as HTMLElement | null
+    const headerWidth = headerEl ? headerEl.clientWidth : window.innerWidth
+
+    // Calculate line width: starts at 20px, grows up to header width minus padding
     const minWidth = 20
-    const maxWidth = window.innerWidth * 0.85
-    const currentWidth = minWidth + (maxWidth - minWidth) * scrollPercent
+    const sidePadding = 16 // keep a little inset from the edges
+    const maxWidth = Math.max(0, headerWidth - sidePadding * 2)
+    const currentWidth = Math.round(minWidth + (maxWidth - minWidth) * scrollPercent)
     
     const progressLine = document.getElementById('progress-line')
     if (progressLine) {
@@ -266,10 +271,15 @@ export default function Portfolio() {
     }
 
     const handleScroll = throttle(updateProgressLine, 16)
+    const handleResize = throttle(updateProgressLine, 50)
     window.addEventListener('scroll', handleScroll)
+    window.addEventListener('resize', handleResize)
     updateProgressLine() // Initial call
 
-    return () => window.removeEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleResize)
+    }
   }, [])
 
   const handleSendMessage = (content: string) => {
