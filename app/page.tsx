@@ -118,20 +118,25 @@ export default function Portfolio() {
   const fetchGitHubCommits = async () => {
     try {
       const response = await fetch('https://api.github.com/users/ruyot/events?per_page=100')
-      const events = await response.json()
-      
+      const json = await response.json()
+
+      if (!Array.isArray(json)) {
+        console.warn('Unexpected GitHub events response shape')
+        return 47
+      }
+
       // Get current month start date
       const now = new Date()
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
       
       // Count push events (commits) this month
       let commitsCount = 0
-      events.forEach((event: any) => {
-        if (event.type === 'PushEvent') {
+      json.forEach((event: any) => {
+        if (event && event.type === 'PushEvent') {
           const eventDate = new Date(event.created_at)
           if (eventDate >= monthStart) {
             // Count the number of commits in this push
-            commitsCount += event.payload.commits ? event.payload.commits.length : 1
+            commitsCount += event.payload && Array.isArray(event.payload.commits) ? event.payload.commits.length : 1
           }
         }
       })
@@ -360,8 +365,9 @@ export default function Portfolio() {
 
           <div className="pt-28 px-6 pb-12">
             {/* Hero Section */}
-            <section id="hero" className="min-h-[60vh] flex items-center relative mt-4">
-              <div className="max-w-4xl w-full">
+            <section id="hero" className="min-h-[60vh] relative mt-4">
+              <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-8 items-center lg:pr-6">
+                {/* Text content */}
                 <div className="space-y-6">
                   <h2 className="inline-block text-4xl lg:text-6xl font-bold leading-[1.1] pb-[0.1em] bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
                     ML Engineer
@@ -385,31 +391,10 @@ export default function Portfolio() {
                     </a>
                   </div>
                 </div>
-                
-                {/* Portrait Image - Absolutely positioned */}
-                <div className="hidden lg:flex flex-col items-center absolute top-1/2 transform -translate-y-1/2" style={{ right: '120px' }}>
-                  <div className="w-64 h-80 bg-gray-800 border-2 border-gray-600 rounded-lg flex items-center justify-center mb-4 overflow-hidden">
-                    <img
-                      src="/me.png"
-                      alt="Tahmeed T Portrait"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        if (target.nextSibling) {
-                          (target.nextSibling as HTMLElement).style.display = 'flex';
-                        }
-                      }}
-                    />
-                    <div className="w-full h-full bg-gray-800 flex items-center justify-center text-gray-400" style={{display: 'none'}}>
-                      <User className="w-16 h-16" />
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Mobile Portrait - Shows below text on mobile */}
-                <div className="lg:hidden flex flex-col items-center mt-8">
-                  <div className="w-48 h-64 bg-gray-800 border-2 border-gray-600 rounded-lg flex items-center justify-center mb-4 overflow-hidden">
+
+                {/* Portrait - responsive grid column */}
+                <div className="flex justify-center lg:justify-end">
+                  <div className="w-48 h-64 lg:w-64 lg:h-80 bg-gray-800 border-2 border-gray-600 rounded-lg flex items-center justify-center overflow-hidden">
                     <img
                       src="/me.png"
                       alt="Tahmeed T Portrait"
@@ -670,6 +655,19 @@ export default function Portfolio() {
               </div>
               <div className="aspect-square bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
                 <img src="/MinML_4.png" alt="MinML Project 4" className="w-full h-full object-cover rounded-lg" />
+              </div>
+              {/* Newly added images */}
+              <div className="aspect-square bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
+                <img src="/Shadow1.png" alt="Shadow 1" className="w-full h-full object-cover rounded-lg" />
+              </div>
+              <div className="aspect-square bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
+                <img src="/Shadow2.png" alt="Shadow 2" className="w-full h-full object-cover rounded-lg" />
+              </div>
+              <div className="aspect-square bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
+                <img src="/Shadow3.png" alt="Shadow 3" className="w-full h-full object-cover rounded-lg" />
+              </div>
+              <div className="aspect-square bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
+                <img src="/Shadow4.png" alt="Shadow 4" className="w-full h-full object-cover rounded-lg" />
               </div>
             </div>
           </div>
