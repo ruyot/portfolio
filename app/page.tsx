@@ -379,7 +379,7 @@ export default function Portfolio() {
                   </p>
                   <div className="pt-2">
                     <a 
-                      href="https://drive.google.com/file/d/1m9trCm4n8Y3C_aCOKZ6N5gn4Yn7C5ahc/view?usp=sharing"
+                      href="https://drive.google.com/file/d/1YyYSdvZ2Bpwg6_NCOCEKpJF5fn6_kQTI/view?usp=sharing"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-100 transition-colors duration-200 no-underline"
