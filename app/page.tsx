@@ -365,7 +365,7 @@ export default function Portfolio() {
 
           <div className="pt-28 px-6 pb-12">
             {/* Hero Section */}
-            <section id="hero" className="min-h-[60vh] relative mt-4">
+            <section id="hero" className="min-h-[calc(100vh-7rem)] relative mt-4">
               <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-8 items-center lg:pr-6">
                 {/* Text content */}
                 <div className="space-y-6">
@@ -392,13 +392,13 @@ export default function Portfolio() {
                   </div>
                 </div>
 
-                {/* Portrait - responsive grid column */}
-                <div className="flex justify-center lg:justify-end">
-                  <div className="w-48 h-64 lg:w-64 lg:h-80 bg-gray-800 border-2 border-gray-600 rounded-lg flex items-center justify-center overflow-hidden">
+                {/* Portrait - fills right half of hero */}
+                <div className="flex justify-center lg:justify-end self-stretch">
+                  <div className="relative w-full h-[50vh] lg:h-[calc(100vh-10rem)] bg-gray-800 border-2 border-gray-600 rounded-lg overflow-hidden">
                     <img
                       src="/me.png"
                       alt="Tahmeed T Portrait"
-                      className="w-full h-full object-cover"
+                      className="absolute inset-0 w-full h-full object-cover"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.style.display = 'none';
@@ -407,7 +407,7 @@ export default function Portfolio() {
                         }
                       }}
                     />
-                    <div className="w-full h-full bg-gray-800 flex items-center justify-center text-gray-400" style={{display: 'none'}}>
+                    <div className="absolute inset-0 w-full h-full bg-gray-800 flex items-center justify-center text-gray-400" style={{display: 'none'}}>
                       <User className="w-16 h-16" />
                     </div>
                   </div>
