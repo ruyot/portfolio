@@ -109,10 +109,16 @@ export default function Portfolio() {
   const [animationsTriggered, setAnimationsTriggered] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const codingStatsRef = useRef<HTMLDivElement>(null)
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
+
+  // Avoid hydration mismatches for dynamic sections (e.g., chat)
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   // Fetch real GitHub commits data
   const fetchGitHubCommits = async () => {
@@ -366,39 +372,72 @@ export default function Portfolio() {
           <div className="pt-28 px-6 pb-12">
             {/* Hero Section */}
             <section id="hero" className="min-h-[calc(100vh-7rem)] relative mt-4">
-              <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-8 items-center lg:pr-6">
-                {/* Text content */}
-                <div className="space-y-6">
-                  <h2 className="inline-block text-4xl lg:text-6xl font-bold leading-[1.1] pb-[0.1em] bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-                    ML Engineer
-                  </h2>
-                  <h3 className="text-2xl lg:text-3xl text-gray-400">Founder & Developer</h3>
-                  <p className="text-lg text-gray-300 max-w-2xl leading-relaxed">
-                    Building the future with artificial intelligence. Passionate about creating innovative solutions at
-                    the intersection of machine learning, software development, and entrepreneurship.
-                  </p>
-                  <div className="pt-2">
-                    <a 
-                      href="https://drive.google.com/file/d/1YyYSdvZ2Bpwg6_NCOCEKpJF5fn6_kQTI/view?usp=sharing"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-100 transition-colors duration-200 no-underline"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                      </svg>
-                      Resume
-                    </a>
+              <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch lg:pr-6 lg:min-h-[calc(100vh-10rem)]">
+                {/* Left Column: Intro + About */}
+                <div className="flex flex-col gap-12 lg:gap-16 pr-2 lg:h-auto lg:justify-center">
+                  {/* Intro */}
+                  <div className="space-y-6" id="intro">
+                    <h2 className="inline-block text-4xl lg:text-6xl font-bold leading-[1.1] pb-[0.1em] bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+                      ML Engineer
+                    </h2>
+                    <h3 className="text-2xl lg:text-3xl text-gray-400">Founder & Developer</h3>
+                    <p className="text-lg text-gray-300 max-w-2xl leading-relaxed">
+                      Building the future with artificial intelligence. Passionate about creating innovative solutions at
+                      the intersection of machine learning, software development, and entrepreneurship.
+                    </p>
+                    <div className="pt-2 mb-8 lg:mb-12">
+                      <a 
+                        href="https://drive.google.com/file/d/1YyYSdvZ2Bpwg6_NCOCEKpJF5fn6_kQTI/view?usp=sharing"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-100 transition-colors duration-200 no-underline"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Resume
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* About + Skills (kept within hero height) */}
+                  <div id="about" className="space-y-6">
+                    <h3 className="text-2xl font-bold font-mono">About</h3>
+                    <div className="space-y-4 mb-8 lg:mb-12">
+                      <p className="text-gray-300 leading-relaxed">
+                        I'm an aspiring ML Engineer and Founder with a passion for building systems that solve
+                        real-world problems, help humanity and automate the future. My journey spans research to practical applications in the industry.
+                      </p>
+                      <p className="text-gray-300 leading-relaxed">
+                        Currently focused on developing next-generation solutions while exploring entrepreneurial
+                        opportunities in the tech space, seeking 2026 internships.
+                      </p>
+                    </div>
+                    <div className="space-y-4">
+                      <h4 className="text-lg font-semibold text-gray-200">Core Skills</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {[
+                          "Python", "PyTorch", "TensorFlow", "React", "Node.js", "Docker", "AWS", "Google Cloud",
+                          "CUDA", "C++", "Rust", "C", "Java", "JavaScript", "TypeScript", "SQL", "NoSQL",
+                          "GraphQL", "REST", "Web3", "Blockchain", "Cryptography", "Quantum Computing",
+                          "Machine Learning", "Computer Vision", "Natural Language Processing"
+                        ].map((skill) => (
+                            <span key={skill} className="px-3 py-1 bg-gray-800 rounded-full text-sm border border-gray-700">
+                              {skill}
+                            </span>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* Portrait - fills right half of hero */}
                 <div className="flex justify-center lg:justify-end self-stretch">
-                  <div className="relative w-full h-[50vh] lg:h-[calc(100vh-10rem)] bg-gray-800 border-2 border-gray-600 rounded-lg overflow-hidden">
+                  <div className="relative w-full h-[40vh] sm:h-[50vh] md:h-[60vh] lg:h-auto lg:max-h-[calc(100vh-10rem)] rounded-lg flex items-center justify-center">
                     <img
                       src="/me.png"
                       alt="Tahmeed T Portrait"
-                      className="absolute inset-0 w-full h-full object-cover"
+                      className="max-h-full max-w-full h-auto w-auto object-contain lg:object-cover lg:w-full lg:h-full lg:object-bottom rounded-lg border-2 border-gray-600"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.style.display = 'none';
@@ -407,7 +446,7 @@ export default function Portfolio() {
                         }
                       }}
                     />
-                    <div className="absolute inset-0 w-full h-full bg-gray-800 flex items-center justify-center text-gray-400" style={{display: 'none'}}>
+                    <div className="w-full h-full bg-black flex items-center justify-center text-gray-400 rounded-lg border-2 border-gray-600" style={{display: 'none'}}>
                       <User className="w-16 h-16" />
                     </div>
                   </div>
@@ -415,37 +454,6 @@ export default function Portfolio() {
               </div>
             </section>
 
-            {/* About Section */}
-            <section id="about" className="py-20">
-              <h2 className="text-3xl font-bold mb-8 font-mono">About</h2>
-              <div className="space-y-8">
-                <div className="space-y-6">
-                  <p className="text-gray-300 leading-relaxed">
-                    I'm an aspiring ML Engineer and Founder with a passion for building systems that solve
-                    real-world problems, help humanity and automate the future. My journey spans research to practical applications in the industry.
-                  </p>
-                  <p className="text-gray-300 leading-relaxed">
-                    Currently focused on developing next-generation solutions while exploring entrepreneurial
-                    opportunities in the tech space, seeking 2026 internships.
-                  </p>
-                </div>
-                <div className="space-y-4">
-                  <h3 className="text-xl font-semibold text-gray-200">Core Skills</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {[
-                      "Python", "PyTorch", "TensorFlow", "React", "Node.js", "Docker", "AWS", "Google Cloud",
-                      "CUDA", "C++", "Rust", "C", "Java", "JavaScript", "TypeScript", "SQL", "NoSQL",
-                      "GraphQL", "REST", "Web3", "Blockchain", "Cryptography", "Quantum Computing",
-                      "Machine Learning", "Computer Vision", "Natural Language Processing"
-                    ].map((skill) => (
-                        <span key={skill} className="px-3 py-1 bg-gray-800 rounded-full text-sm border border-gray-700">
-                          {skill}
-                        </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </section>
 
             {/* Projects Section */}
             <section id="projects" className="py-20">
@@ -552,75 +560,77 @@ export default function Portfolio() {
             <p className="text-sm text-gray-600 mt-1">Ask me about Tahmeed's work</p>
           </div>
 
-          {/* Chat Section */}
-          <div className="flex-1 max-h-[40vh] flex flex-col">
-            <ScrollArea className="flex-1 p-4">
-              <div className="space-y-4">
-                {messages.map((message) => (
-                  <div key={message.id} className={`flex gap-3 ${message.type === "user" ? "justify-end" : ""}`}>
-                    {message.type === "bot" && (
-                      <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center flex-shrink-0">
-                        <Bot className="w-4 h-4 text-white" />
+          {/* Chat Section - render on client only to avoid hydration issues */}
+          {isClient && (
+            <div className="flex-1 max-h-[40vh] flex flex-col">
+              <ScrollArea className="flex-1 p-4">
+                <div className="space-y-4">
+                  {messages.map((message) => (
+                    <div key={message.id} className={`flex gap-3 ${message.type === "user" ? "justify-end" : ""}`}>
+                      {message.type === "bot" && (
+                        <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center flex-shrink-0">
+                          <Bot className="w-4 h-4 text-white" />
+                        </div>
+                      )}
+                      <div
+                        className={`max-w-[80%] p-3 rounded-lg ${
+                          message.type === "user" ? "bg-black text-white ml-auto" : "bg-gray-100 text-gray-900"
+                        }`}
+                      >
+                        <p className="text-sm">{message.content}</p>
                       </div>
-                    )}
-                    <div
-                      className={`max-w-[80%] p-3 rounded-lg ${
-                        message.type === "user" ? "bg-black text-white ml-auto" : "bg-gray-100 text-gray-900"
-                      }`}
-                    >
-                      <p className="text-sm">{message.content}</p>
+                      {message.type === "user" && (
+                        <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center flex-shrink-0">
+                          <User className="w-4 h-4 text-gray-700" />
+                        </div>
+                      )}
                     </div>
-                    {message.type === "user" && (
-                      <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center flex-shrink-0">
-                        <User className="w-4 h-4 text-gray-700" />
-                      </div>
-                    )}
-                  </div>
-                ))}
-                <div ref={messagesEndRef} />
-              </div>
-            </ScrollArea>
-
-            <div className="p-4 border-t border-gray-200">
-              <div className="mb-3">
-                <p className="text-xs text-gray-500 mb-2">Quick prompts:</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {quickPrompts.map((prompt, index) => (
-                    <Button
-                      key={index}
-                      variant="outline"
-                      size="sm"
-                      className="text-xs border-gray-300 hover:bg-gray-50 h-auto py-2 px-3 bg-white text-black"
-                      onClick={() => handleQuickPrompt(prompt)}
-                    >
-                      {prompt.text}
-                    </Button>
                   ))}
+                  <div ref={messagesEndRef} />
+                </div>
+              </ScrollArea>
+
+              <div className="p-4 border-t border-gray-200">
+                <div className="mb-3">
+                  <p className="text-xs text-gray-500 mb-2">Quick prompts:</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {quickPrompts.map((prompt, index) => (
+                      <Button
+                        key={index}
+                        variant="outline"
+                        size="sm"
+                        className="text-xs border-gray-300 hover:bg-gray-50 h-auto py-2 px-3 bg-white text-black"
+                        onClick={() => handleQuickPrompt(prompt)}
+                      >
+                        {prompt.text}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Input
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    placeholder="Ask me anything..."
+                    className="bg-white border-gray-300 text-black placeholder-gray-500"
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter" && inputValue.trim()) {
+                        handleSendMessage(inputValue.trim())
+                      }
+                    }}
+                  />
+                  <Button
+                    size="icon"
+                    onClick={() => inputValue.trim() && handleSendMessage(inputValue.trim())}
+                    disabled={!inputValue.trim()}
+                    className="bg-black hover:bg-gray-800 text-white"
+                  >
+                    <Send className="w-4 h-4" />
+                  </Button>
                 </div>
               </div>
-              <div className="flex gap-2">
-                <Input
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  placeholder="Ask me anything..."
-                  className="bg-white border-gray-300 text-black placeholder-gray-500"
-                  onKeyPress={(e) => {
-                    if (e.key === "Enter" && inputValue.trim()) {
-                      handleSendMessage(inputValue.trim())
-                    }
-                  }}
-                />
-                <Button
-                  size="icon"
-                  onClick={() => inputValue.trim() && handleSendMessage(inputValue.trim())}
-                  disabled={!inputValue.trim()}
-                  className="bg-black hover:bg-gray-800 text-white"
-                >
-                  <Send className="w-4 h-4" />
-                </Button>
-              </div>
             </div>
-          </div>
+          )}
 
           {/* Project Images Grid */}
           <div className="border-t border-gray-200 p-4">
